@@ -1,0 +1,3 @@
+<svelte:head><title>资料来源 | 信工所考研信息站</title></svelte:head>
+<section class="page-heading"><p class="eyebrow">信息边界</p><h1 class="page-title">资料来源</h1><p class="page-lead">每项数据都应能回到来源和年份。个人经验用于理解过程，不覆盖官方结论。</p></section>
+<section class="section prose"><h2>官方来源</h2><ul><li><a href="https://iie.cas.cn/" rel="noreferrer">中国科学院信息工程研究所</a></li><li><a href="https://iie.cas.cn/xsjy/" rel="noreferrer">信工所学生教育</a></li><li><a href="https://admission.ucas.ac.cn/" rel="noreferrer">中国科学院大学招生信息网</a></li></ul><h2>学生整理数据</h2><p>本站展示的 2024-2026 年数据来自相应届别同学整理的报告，不代表信工所官方。本站只摘录必要统计项并标明口径，不重新发布报告全文。</p><h2>更新规则</h2><p>页面出现冲突时，优先级依次为：当年官方文件、官方网页、可核验名单或报告、作者本人经验、群聊与口头转述。后两类信息不能覆盖官方结论。</p></section>

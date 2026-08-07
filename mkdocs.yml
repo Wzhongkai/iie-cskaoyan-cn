@@ -1,0 +1,100 @@
+site_name: 信工所考研信息站
+site_description: 中国科学院信息工程研究所考研政策、历年数据与经验分享
+site_author: 信工所考研信息站维护者
+
+theme:
+  name: material
+  language: zh
+  custom_dir: overrides
+  font: false
+  icon:
+    logo: material/shield-search
+  features:
+    - announce.dismiss
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - search.share
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: 切换到深色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到浅色模式
+
+nav:
+  - 首页: index.md
+  - 招生信息:
+      - 招生数据: data/index.md
+      - 报考政策: policy.md
+      - 科室与方向: research-groups.md
+  - 初试经验:
+      - 经验索引: initial/index.md
+      - 985 科班 388: initial/985-388.md
+      - 双非一战上岸: initial/double-non.md
+  - 复试经验:
+      - 经验索引: reexam/index.md
+      - 准备框架: reexam/checklist.md
+  - 就业分享:
+      - 去向索引: career/index.md
+      - 投稿模板: career/template.md
+  - 参与维护:
+      - 投稿与纠错: contribute.md
+      - 资料来源: sources.md
+      - 免责声明: disclaimer.md
+
+plugins:
+  - search:
+      lang:
+        - zh
+        - en
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+extra_javascript:
+  - assets/javascripts/site.js
+
+extra:
+  giscus:
+    enabled: false
+    repo: ""
+    repo_id: ""
+    category: ""
+    category_id: ""
+
+copyright: 本站为考生公益维护，非中国科学院信息工程研究所官方网站。请以官方信息为准。

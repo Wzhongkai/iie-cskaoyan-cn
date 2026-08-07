@@ -1,0 +1,26 @@
+site/
+.cache/
+.venv/
+tmp/
+__pycache__/
+frontend/node_modules/
+frontend/.svelte-kit/
+frontend/build/
+backend/target*/
+backend/uploads/
+
+# Local configuration and credentials
+**/.env
+**/.env.*
+!**/.env.example
+
+# Local runtime files
+**/uploads/
+*.log
+*.pid
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
