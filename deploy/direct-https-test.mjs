@@ -2,8 +2,8 @@ import fs from 'node:fs';
 import https from 'node:https';
 
 const options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/iie.cskaoyan.cn/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/iie.cskaoyan.cn/fullchain.pem'),
+  key: fs.readFileSync(process.env.TLS_KEY_FILE ?? '/etc/letsencrypt/live/example.com/privkey.pem'),
+  cert: fs.readFileSync(process.env.TLS_CERT_FILE ?? '/etc/letsencrypt/live/example.com/fullchain.pem'),
   minVersion: 'TLSv1.2'
 };
 

@@ -18,6 +18,12 @@ backend/uploads/
 **/uploads/
 *.log
 *.pid
+*.dump
+*.sql.gz
+*.pem
+*.key
+*.p12
+*.pfx
 
 # Editor and operating-system files
 .DS_Store
