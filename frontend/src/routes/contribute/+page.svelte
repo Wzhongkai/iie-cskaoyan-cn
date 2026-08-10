@@ -94,11 +94,25 @@
     const markdownDirectory = markdownEntry.name.includes('/') ? markdownEntry.name.slice(0, markdownEntry.name.lastIndexOf('/') + 1) : '';
     const entriesByPath = new Map(Object.values(bundle.files).filter((entry) => !entry.dir).map((entry) => [normalizeBundlePath(entry.name).toLowerCase(), entry]));
 
+    function findImageEntry(reference: string) {
+      const relativePath = normalizeBundlePath(`${markdownDirectory}${reference}`).toLowerCase();
+      const exactEntry = entriesByPath.get(relativePath);
+      if (exactEntry) return exactEntry;
+
+      const portablePath = normalizeBundlePath(reference.replace(/^file:\/+/i, '').replace(/^[a-z]:[\\/]/i, '')).toLowerCase();
+      const pathParts = portablePath.split('/').filter(Boolean);
+      for (let index = 0; index < pathParts.length; index += 1) {
+        const suffix = pathParts.slice(index).join('/');
+        const matches = [...entriesByPath.entries()].filter(([path]) => path === suffix || path.endsWith(`/${suffix}`));
+        if (matches.length === 1) return matches[0][1];
+      }
+      return undefined;
+    }
+
     for (const reference of localImageReferences(importedBody)) {
       let decodedReference = reference;
       try { decodedReference = decodeURIComponent(reference); } catch { /* Keep the original path when it is not URL encoded. */ }
-      const resolvedPath = normalizeBundlePath(`${markdownDirectory}${decodedReference}`).toLowerCase();
-      const imageEntry = entriesByPath.get(resolvedPath);
+      const imageEntry = findImageEntry(decodedReference);
       if (!imageEntry) throw new Error(`ZIP 中找不到 Markdown 引用的图片：${reference}`);
       const mimeType = imageMimeType(imageEntry.name);
       if (!mimeType) throw new Error(`不支持的图片格式：${reference}`);

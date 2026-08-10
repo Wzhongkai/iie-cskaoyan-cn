@@ -187,6 +187,9 @@ npm run build
 ```
 
 生产构建完成后，前端输出位于 `frontend/build/`，后端二进制位于 `backend/target/release/`。
+部署 SvelteKit SSR 时还必须将 `frontend/package.json` 和 `frontend/package-lock.json` 一并
+放入发布目录，并在该目录执行 `npm ci --omit=dev`。仅上传 `build/` 会导致文章页运行时找不到
+`marked` 等生产依赖并返回 500。
 
 本地运行前端生产构建：
 
