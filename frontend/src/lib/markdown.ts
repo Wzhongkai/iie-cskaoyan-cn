@@ -1,9 +1,21 @@
-import { marked } from 'marked';
+import { marked, Marked, Renderer } from 'marked';
 import markedKatex from 'marked-katex-extension';
 import sanitizeHtml from 'sanitize-html';
 
 marked.setOptions({ gfm: true, breaks: true });
 marked.use(markedKatex({ throwOnError: false, output: 'htmlAndMathml' }));
+
+export type MarkdownHeading = { id: string; text: string; level: 2 | 3 };
+
+export function extractMarkdownHeadings(source: string): MarkdownHeading[] {
+  let headingIndex = 0;
+  return marked.lexer(source).flatMap((token) => {
+    if (token.type !== 'heading') return [];
+    const id = `article-section-${++headingIndex}`;
+    if (token.depth !== 2 && token.depth !== 3) return [];
+    return [{ id, text: token.text.trim(), level: token.depth }];
+  });
+}
 
 const mathTags = [
   'math', 'semantics', 'annotation', 'mrow', 'mi', 'mn', 'mo', 'mtext', 'mspace',
@@ -13,12 +25,25 @@ const mathTags = [
 ];
 
 export function renderMarkdown(source: string): string {
-  const html = marked.parse(source) as string;
+  let headingIndex = 0;
+  const renderer = new Renderer();
+  renderer.heading = function ({ tokens, depth }) {
+    const id = `article-section-${++headingIndex}`;
+    return `<h${depth} id="${id}">${this.parser.parseInline(tokens)}</h${depth}>\n`;
+  };
+  const markdown = new Marked();
+  markdown.setOptions({ gfm: true, breaks: true, renderer });
+  markdown.use(markedKatex({ throwOnError: false, output: 'htmlAndMathml' }));
+  const html = markdown.parse(source) as string;
   return sanitizeHtml(html, {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(['h1', 'h2', 'h3', 'h4', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'img', ...mathTags]),
     allowedAttributes: {
       ...sanitizeHtml.defaults.allowedAttributes,
       a: ['href', 'name', 'target', 'rel'],
+      h1: ['id'],
+      h2: ['id'],
+      h3: ['id'],
+      h4: ['id'],
       img: ['src', 'alt', 'title', 'width', 'height', 'loading'],
       span: ['class', 'style', 'aria-hidden'],
       math: ['xmlns', 'display'],

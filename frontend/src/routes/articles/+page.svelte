@@ -1,17 +1,11 @@
 <script lang="ts">
   import { ArrowRight, BookOpen, Search } from '@lucide/svelte';
-  import type { Article } from '$lib/types';
+  import type { Article, Category } from '$lib/types';
 
-  let { data }: { data: { articles: Article[]; category: string | null; q: string | null } } = $props();
+  let { data }: { data: { articles: Article[]; categories: Category[]; category: string | null; q: string | null } } = $props();
   let search = $state('');
   $effect(() => { search = data.q ?? ''; });
-  const categories = [
-    { value: '', label: '全部内容' },
-    { value: 'initial', label: '初试经验' },
-    { value: 'reexam', label: '复试经验' },
-    { value: 'career', label: '就业分享' },
-    { value: 'policy', label: '政策资料' }
-  ];
+  const categoryLabel = (slug: string) => data.categories.find((item) => item.slug === slug)?.name ?? slug;
 </script>
 
 <svelte:head><title>内容库 | 信工所考研信息站</title></svelte:head>
@@ -26,8 +20,9 @@
   <form class="toolbar" method="GET">
     <div class="search-box"><Search size={17} /><input name="q" bind:value={search} placeholder="搜索标题、摘要或正文" aria-label="搜索内容" /><button class="icon-button" type="submit" aria-label="提交搜索"><ArrowRight size={17} /></button></div>
     <div class="category-tabs" aria-label="内容分类">
-      {#each categories as item}
-        <a class:active={(data.category ?? '') === item.value} href={item.value ? `/articles?category=${item.value}` : '/articles'}>{item.label}</a>
+      <a class:active={(data.category ?? '') === ''} href="/articles">全部内容</a>
+      {#each data.categories as item}
+        <a class:active={(data.category ?? '') === item.slug} href={`/articles?category=${item.slug}`}>{item.name}</a>
       {/each}
     </div>
   </form>
@@ -40,7 +35,7 @@
           <div class="card-meta"><span>{article.year ?? '资料'}</span><span class="status-pill published">已发布</span></div>
           <h2>{article.title}</h2>
           <p>{article.excerpt ?? '打开文章查看完整内容。'}</p>
-          <span class="card-foot">{article.category} <ArrowRight size={15} /></span>
+          <span class="card-foot">{categoryLabel(article.category)} {#if article.is_protected}· 需密码{/if} <ArrowRight size={15} /></span>
         </a>
       {/each}
     </div>

@@ -1,4 +1,10 @@
-export type ArticleCategory = 'initial' | 'reexam' | 'career' | 'policy' | 'data';
+export type ArticleCategory = string;
+
+export type Category = {
+  slug: string;
+  name: string;
+  sort_order: number;
+};
 
 export type Article = {
   id: string;
@@ -10,9 +16,24 @@ export type Article = {
   year: number | null;
   status: 'draft' | 'published' | 'archived';
   is_pinned: boolean;
+  is_protected: boolean;
   created_at: string;
   updated_at: string;
   published_at: string | null;
+};
+
+export type ArticleComment = {
+  id: string;
+  parent_id: string | null;
+  body: string;
+  created_at: string;
+  author_login: string;
+  author_avatar_url: string | null;
+};
+
+export type GithubProfile = {
+  login: string;
+  avatar_url: string | null;
 };
 
 export type AdmissionStat = {

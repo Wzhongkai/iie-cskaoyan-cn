@@ -28,8 +28,14 @@ pub(crate) async fn create_submission(
     if !(20..=500_000).contains(&input.body_markdown.trim().chars().count()) {
         return Err(ApiError::BadRequest("正文长度应为 20-500000 个字符".into()));
     }
-    if !["initial", "reexam", "career", "policy", "data"].contains(&input.category.as_str()) {
-        return Err(ApiError::BadRequest("内容分类不合法".into()));
+    let category_exists = sqlx::query_scalar::<_, bool>(
+        "SELECT EXISTS(SELECT 1 FROM article_categories WHERE slug = $1)",
+    )
+    .bind(&input.category)
+    .fetch_one(&state.pool)
+    .await?;
+    if !category_exists {
+        return Err(ApiError::BadRequest("内容分类不存在".into()));
     }
 
     let id = Uuid::new_v4();

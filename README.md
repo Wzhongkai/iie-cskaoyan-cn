@@ -110,6 +110,9 @@ UPLOAD_DIR=./uploads
 | `ADMIN_TOKEN` | 是 | 无 | 后台管理凭据，至少 32 个字符 |
 | `API_BIND` | 否 | `127.0.0.1:9000` | API 监听地址 |
 | `UPLOAD_DIR` | 否 | `./uploads` | 投稿图片存储目录 |
+| `GITHUB_CLIENT_ID` | 评论时必填 | 无 | GitHub OAuth App 的 Client ID |
+| `GITHUB_CLIENT_SECRET` | 评论时必填 | 无 | GitHub OAuth App 的 Client secret |
+| `GITHUB_OAUTH_REDIRECT_URI` | 评论时必填 | 无 | GitHub 回调地址，例如 `https://iie.cskaoyan.cn/api/v1/auth/github/callback` |
 | `RUST_LOG` | 否 | `info` | Rust 日志级别 |
 
 真实的 `.env` 已被 Git 忽略，不要将后台令牌或生产数据库密码提交到仓库。
@@ -205,6 +208,10 @@ node build
 └─ backend/
 ```
 
+上传文件独立保存在 `/srv/iie-cskaoyan/uploads`，不能放在某个发布版本的
+`backend/uploads` 中。切换 `current` 前需确认该目录仍存在、归属 `deploy:deploy`，并由
+`iie-api.service` 的 `UPLOAD_DIR` 环境变量指向它。
+
 服务结构：
 
 | 服务 | 地址 | systemd 服务 |
@@ -220,6 +227,11 @@ Nginx 将 `/api/` 和 `/uploads/` 转发到 Rust API，其余请求转发到 Sve
 /etc/iie-cskaoyan/api.env
 /etc/iie-cskaoyan/web.env
 ```
+
+评论使用 GitHub OAuth 登录。上线前需在 GitHub 创建 OAuth App，将授权回调 URL 设为
+`https://iie.cskaoyan.cn/api/v1/auth/github/callback`，并将其 Client ID、Client secret 与回调
+URL 写入 `/etc/iie-cskaoyan/api.env` 的 `GITHUB_CLIENT_ID`、`GITHUB_CLIENT_SECRET`、
+`GITHUB_OAUTH_REDIRECT_URI`。缺少这三项时，文章和公开评论仍可查看，但无法登录发布评论。
 
 常用维护命令：
 

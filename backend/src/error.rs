@@ -13,6 +13,12 @@ pub(crate) enum ApiError {
     BadRequest(String),
     #[error("未授权")]
     Unauthorized,
+    #[error("需要登录")]
+    AuthenticationRequired,
+    #[error("访问被拒绝")]
+    AccessDenied,
+    #[error("服务配置不完整")]
+    Unavailable,
     #[error("资源不存在")]
     NotFound,
 }
@@ -29,6 +35,14 @@ impl IntoResponse for ApiError {
             }
             Self::BadRequest(message) => (StatusCode::BAD_REQUEST, message),
             Self::Unauthorized => (StatusCode::UNAUTHORIZED, "管理凭据无效".to_string()),
+            Self::AuthenticationRequired => {
+                (StatusCode::UNAUTHORIZED, "请先使用 GitHub 登录".to_string())
+            }
+            Self::AccessDenied => (StatusCode::FORBIDDEN, "访问密码错误".to_string()),
+            Self::Unavailable => (
+                StatusCode::SERVICE_UNAVAILABLE,
+                "该功能暂未配置".to_string(),
+            ),
             Self::NotFound => (StatusCode::NOT_FOUND, "资源不存在".to_string()),
         };
         (status, Json(serde_json::json!({ "error": message }))).into_response()

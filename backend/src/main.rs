@@ -11,7 +11,7 @@ use sqlx::PgPool;
 use tokio::fs;
 use tracing::info;
 
-use state::AppState;
+use state::{AppState, GithubOAuthConfig};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -31,10 +31,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let upload_dir = PathBuf::from(env::var("UPLOAD_DIR").unwrap_or_else(|_| "./uploads".into()));
     fs::create_dir_all(&upload_dir).await?;
+    let github_oauth = match (
+        env::var("GITHUB_CLIENT_ID").ok(),
+        env::var("GITHUB_CLIENT_SECRET").ok(),
+        env::var("GITHUB_OAUTH_REDIRECT_URI").ok(),
+    ) {
+        (Some(client_id), Some(client_secret), Some(redirect_uri)) => Some(GithubOAuthConfig {
+            client_id,
+            client_secret,
+            redirect_uri,
+        }),
+        _ => None,
+    };
     let state = AppState {
         pool,
         admin_token,
         upload_dir,
+        github_oauth,
     };
     let app = router::build(state);
 

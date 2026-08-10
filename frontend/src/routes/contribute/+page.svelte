@@ -3,9 +3,12 @@
   import JSZip from 'jszip';
   import { parseDocument } from 'yaml';
   import { renderMarkdown } from '$lib/markdown';
+  import type { Category } from '$lib/types';
+
+  let { data }: { data: { categories: Category[] } } = $props();
 
   let title = $state('');
-  let category = $state('initial');
+  let category = $state('');
   let year = $state(String(new Date().getFullYear()));
   let background = $state('');
   let contact = $state('');
@@ -21,8 +24,6 @@
   let unresolvedImages = $derived(localImageReferences(body));
   let bodyEditor = $state<HTMLTextAreaElement | undefined>(undefined);
 
-  const categoryNames: Record<string, string> = { initial: '初试经验', reexam: '复试经验', career: '就业分享', policy: '政策资料', data: '数据纠错' };
-
   function frontMatter(source: string) {
     if (!source.startsWith('---')) return { content: source, values: {} as Record<string, unknown> };
     const match = source.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*(?:\r?\n|$)/);
@@ -37,7 +38,7 @@
 
   function applyFrontMatter(values: Record<string, unknown>) {
     if (typeof values.title === 'string') title = values.title.slice(0, 120);
-    if (typeof values.category === 'string' && values.category in categoryNames) category = values.category;
+    if (typeof values.category === 'string' && data.categories.some((item) => item.slug === values.category)) category = values.category;
     const parsedYear = Number(values.year ?? values.date?.toString().slice(0, 4));
     if (Number.isInteger(parsedYear) && parsedYear >= 2010 && parsedYear <= 2100) year = String(parsedYear);
     const summary = values.summary ?? values.excerpt ?? values.description;
@@ -161,7 +162,7 @@
     if (body.length > 500_000) { errorMessage = '正文不能超过 500000 个字符'; return; }
     submitting = true; result = ''; errorMessage = '';
     try {
-      const response = await fetch('/api/v1/submissions', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ title, category, year: year ? Number(year) : null, background, contact, body_markdown: body, consent, website }) });
+      const response = await fetch('/api/v1/submissions', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ title, category: category || data.categories[0]?.slug, year: year ? Number(year) : null, background, contact, body_markdown: body, consent, website }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || '提交失败');
       result = `提交成功，编号为 ${payload.reference_code}。维护者审核后会根据你留下的联系方式沟通。`;
@@ -183,7 +184,7 @@
       {#if errorMessage}<div class="error-box">{errorMessage}</div>{/if}
       <div class="form-grid">
         <div class="field full"><label for="title">标题</label><input class="input" id="title" bind:value={title} required minlength="2" maxlength="120" placeholder="例如：2026 复试准备与项目表达复盘" /></div>
-        <div class="field"><label for="category">分类</label><select class="select" id="category" bind:value={category}>{#each Object.entries(categoryNames) as [value, name]}<option {value}>{name}</option>{/each}</select></div>
+        <div class="field"><label for="category">分类</label><select class="select" id="category" bind:value={category}>{#each data.categories as item}<option value={item.slug}>{item.name}</option>{/each}</select></div>
         <div class="field"><label for="year">相关年份 <small>缺省为当前年</small></label><input class="input" id="year" type="number" min="2010" max="2100" bind:value={year} /></div>
         <div class="field"><label for="background">摘要 / 背景 <small>可选</small></label><input class="input" id="background" bind:value={background} maxlength="240" placeholder="会显示在文章列表中" /></div>
         <div class="field"><label for="contact">审核联系 <small>可选，不公开</small></label><input class="input" id="contact" bind:value={contact} maxlength="240" placeholder="邮箱或其他方式" /></div>

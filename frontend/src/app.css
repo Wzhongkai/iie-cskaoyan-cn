@@ -56,8 +56,6 @@ nav { display: flex; align-items: center; gap: 4px; }
 nav a { display: flex; height: 40px; padding: 0 11px; align-items: center; border-radius: 8px; color: var(--muted); gap: 6px; font-size: 13px; font-weight: 650; transition: color .2s ease, background .2s ease, transform .2s ease; }
 nav a:hover, nav a.active { background: var(--accent-soft); color: var(--accent-dark); }
 nav a:active { transform: scale(.98); }
-.group-link { margin-left: 4px; border: 1px solid rgba(var(--accent-rgb), .22); background: white; color: var(--accent) !important; }
-.group-link:hover { border-color: rgba(var(--accent-rgb), .4); background: var(--accent-soft); box-shadow: var(--shadow-sm); }
 .search-link { margin-left: 6px; border-left: 1px solid var(--line); border-radius: 0 !important; }
 .icon-button { display: inline-grid; width: 40px; height: 40px; padding: 0; place-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); cursor: pointer; }
 .mobile-toggle { display: none; }
@@ -122,12 +120,14 @@ tbody tr:hover { background: #f8faff; }
 .prose h1 { margin-top: 0; font-size: 34px; }
 .prose h2 { padding-bottom: 8px; border-bottom: 1px solid var(--line); font-size: 23px; }
 .prose h3 { font-size: 18px; }
+.prose h2[id], .prose h3[id] { scroll-margin-top: 104px; }
 .prose p, .prose ul, .prose ol { margin: 0 0 1.1em; }
 .prose a { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
 .prose blockquote { margin: 1.4em 0; padding: 12px 18px; border-left: 3px solid var(--amber); background: #fff8e9; color: #62553c; }
 .prose code { padding: 2px 5px; border-radius: 3px; background: var(--soft); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .9em; }
 .prose pre { overflow-x: auto; padding: 16px; border-radius: 8px; background: #0f172a; color: #f8fafc; }
 .prose pre code { padding: 0; background: transparent; }
+.prose img { display: block; width: auto; height: auto; max-width: 100%; max-height: min(720px, 72vh); margin: 1.5em auto; border: 1px solid var(--line); border-radius: 6px; object-fit: contain; }
 .prose table { display: block; overflow-x: auto; margin: 1.4em 0; border: 1px solid var(--line); }
 .prose .katex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: .35em 0; }
 
@@ -142,9 +142,9 @@ tbody tr:hover { background: #f8faff; }
   nav.open { display: grid; }
   nav a { padding: 0 12px; }
   .search-link { margin: 3px 0 0; border-top: 1px solid var(--line); border-left: 0; }
-  .group-link { margin-left: 0; }
   .footer-inner { flex-direction: column; }
   .page-title, .prose h1 { font-size: 28px; }
+  .prose img { max-width: 100%; max-height: 68vh; }
   .page-heading { padding-top: 38px; }
 }
 

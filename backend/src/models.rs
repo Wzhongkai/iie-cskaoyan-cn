@@ -14,6 +14,7 @@ pub(crate) struct Article {
     pub(crate) year: Option<i32>,
     pub(crate) status: String,
     pub(crate) is_pinned: bool,
+    pub(crate) is_protected: bool,
     pub(crate) created_at: DateTime<Utc>,
     pub(crate) updated_at: DateTime<Utc>,
     pub(crate) published_at: Option<DateTime<Utc>>,
@@ -52,6 +53,20 @@ pub(crate) struct ArticleQuery {
     pub(crate) category: Option<String>,
     pub(crate) q: Option<String>,
     pub(crate) limit: Option<i64>,
+}
+
+#[derive(Debug, Serialize, FromRow)]
+pub(crate) struct ArticleCategory {
+    pub(crate) slug: String,
+    pub(crate) name: String,
+    pub(crate) sort_order: i32,
+}
+
+#[derive(Debug, Deserialize)]
+pub(crate) struct ArticleCategoryInput {
+    pub(crate) slug: String,
+    pub(crate) name: String,
+    pub(crate) sort_order: i32,
 }
 
 #[derive(Debug, Deserialize)]
@@ -99,6 +114,49 @@ pub(crate) struct ArticleInput {
     pub(crate) status: String,
     #[serde(default)]
     pub(crate) is_pinned: bool,
+    #[serde(default)]
+    pub(crate) access_password: Option<String>,
+    #[serde(default)]
+    pub(crate) clear_access_password: bool,
+}
+
+#[derive(Debug, Deserialize)]
+pub(crate) struct ArticlePasswordInput {
+    pub(crate) password: String,
+}
+
+#[derive(Debug, Serialize, FromRow)]
+pub(crate) struct ArticleComment {
+    pub(crate) id: Uuid,
+    pub(crate) parent_id: Option<Uuid>,
+    pub(crate) body: String,
+    pub(crate) created_at: DateTime<Utc>,
+    pub(crate) author_login: String,
+    pub(crate) author_avatar_url: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub(crate) struct ArticleCommentInput {
+    pub(crate) body: String,
+    #[serde(default)]
+    pub(crate) parent_id: Option<Uuid>,
+}
+
+#[derive(Debug, Serialize, FromRow)]
+pub(crate) struct GithubProfile {
+    pub(crate) login: String,
+    pub(crate) avatar_url: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub(crate) struct GithubAuthQuery {
+    pub(crate) return_to: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub(crate) struct GithubCallbackQuery {
+    pub(crate) code: String,
+    pub(crate) state: Uuid,
 }
 
 #[derive(Debug, Serialize, FromRow)]

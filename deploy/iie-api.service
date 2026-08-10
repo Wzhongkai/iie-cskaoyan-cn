@@ -9,6 +9,7 @@ User=deploy
 Group=deploy
 WorkingDirectory=/srv/iie-cskaoyan/current/backend
 EnvironmentFile=/etc/iie-cskaoyan/api.env
+Environment=UPLOAD_DIR=/srv/iie-cskaoyan/uploads
 ExecStart=/srv/iie-cskaoyan/current/backend/iie-cskaoyan-api
 Restart=on-failure
 RestartSec=5

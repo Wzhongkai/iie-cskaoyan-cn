@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { BookOpen, Database, FilePenLine, Menu, Search, ShieldCheck, Users, X } from '@lucide/svelte';
+  import { BookOpen, Database, FilePenLine, Menu, Search, ShieldCheck, X } from '@lucide/svelte';
   import { page } from '$app/state';
 
   let open = false;
@@ -29,7 +29,6 @@
           <span>{link.label}</span>
         </a>
       {/each}
-      <a class="group-link" href="https://qm.qq.com/cgi-bin/qm/qr?k=ACZTVa0fSQeBPh_N7tP95qEk6x3M5anr&jump_from=webapi&authKey=zpgZtJVkjwC/QvBT9UVHJBc8dhlqTqP4wBw/Gpb3vVMGJj7wHJlBLlwXqFrKFuG7" target="_blank" rel="noreferrer" onclick={() => (open = false)}><Users size={16} strokeWidth={1.8} />加入交流群</a>
       <a class="search-link" href="/articles?focus=search" onclick={() => (open = false)}><Search size={16} />搜索</a>
     </nav>
   </div>

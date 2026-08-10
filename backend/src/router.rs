@@ -15,8 +15,11 @@ use crate::{
     handlers::{
         articles::{
             create_article, delete_article, get_article, list_admin_articles, list_articles,
-            update_article,
+            unlock_article, update_article,
         },
+        categories::{create_category, list_categories, update_category},
+        comments::{create_comment, delete_admin_comment, list_admin_comments, list_comments},
+        github::{github_callback, github_me, start_github_login},
         reports::{
             delete_lab, delete_school, delete_school_tier, delete_score_band, delete_subject,
             get_latest_report, get_report, list_admin_reports, list_reports, upsert_lab,
@@ -41,6 +44,15 @@ pub(crate) fn build(state: AppState) -> Router {
         .route("/api/v1/reports/{year}", get(get_report))
         .route("/api/v1/articles", get(list_articles))
         .route("/api/v1/articles/{slug}", get(get_article))
+        .route("/api/v1/articles/{slug}/unlock", post(unlock_article))
+        .route(
+            "/api/v1/articles/{slug}/comments",
+            get(list_comments).post(create_comment),
+        )
+        .route("/api/v1/categories", get(list_categories))
+        .route("/api/v1/auth/github", get(start_github_login))
+        .route("/api/v1/auth/github/callback", get(github_callback))
+        .route("/api/v1/auth/github/me", get(github_me))
         .route("/api/v1/submissions", post(create_submission))
         .route("/api/v1/uploads", post(upload_image))
         .route("/api/v1/admin/submissions", get(list_submissions))
@@ -53,6 +65,16 @@ pub(crate) fn build(state: AppState) -> Router {
             "/api/v1/admin/articles/{id}",
             patch(update_article).delete(delete_article),
         )
+        .route(
+            "/api/v1/admin/articles/{article_id}/comments",
+            get(list_admin_comments),
+        )
+        .route(
+            "/api/v1/admin/articles/{article_id}/comments/{comment_id}",
+            delete(delete_admin_comment),
+        )
+        .route("/api/v1/admin/categories", post(create_category))
+        .route("/api/v1/admin/categories/{slug}", patch(update_category))
         .route(
             "/api/v1/admin/stats",
             get(list_admin_stats).post(upsert_stat),

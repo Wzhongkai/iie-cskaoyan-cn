@@ -2,9 +2,9 @@
   import { ArrowRight, BarChart3, BookOpen, CheckCircle2, FilePlus2, Pin, Search, ShieldCheck, Users } from '@lucide/svelte';
   import type { EChartsCoreOption as EChartsOption } from 'echarts/core';
   import DataChart from '$lib/components/DataChart.svelte';
-  import type { AnnualReportDetail, AnnualReportOverview, Article, ScoreBandStat, SchoolTierStat } from '$lib/types';
+  import type { AnnualReportDetail, AnnualReportOverview, Article, Category, ScoreBandStat, SchoolTierStat } from '$lib/types';
 
-  let { data }: { data: { report: AnnualReportDetail | null; reports: AnnualReportOverview[]; recent: Article[] } } = $props();
+  let { data }: { data: { report: AnnualReportDetail | null; reports: AnnualReportOverview[]; recent: Article[]; categories: Category[] } } = $props();
   const report = $derived(data.report);
   const overview = $derived(report?.overview);
   const recommendationTiers = $derived(report?.school_tiers.filter((item) => item.track === 'recommendation') ?? []);
@@ -14,6 +14,7 @@
   const topExamSchools = $derived(report?.schools.filter((item) => item.track === 'exam' && item.tier === '985').slice(0, 8) ?? []);
 
   const tierNames: Record<string, string> = { '985': '985（含国科大）', '211': '211（非 985）', non_211: '双非' };
+  const categoryDescriptions: Record<string, string> = { initial: '科目节奏、资料选择和复盘方法。', reexam: '项目表达、专业问答和时间线。', career: '方向、城市、样本和统计口径。' };
 
   function pieOption(items: SchoolTierStat[]): EChartsOption {
     return {
@@ -114,9 +115,9 @@
 <section class="section">
   <div class="section-head"><div><p class="eyebrow">经验分类</p><h2>数据之外，还要看真实经历</h2></div><a class="button" href="/contribute"><FilePlus2 size={15} />提交内容</a></div>
   <div class="workflow-grid">
-    <a class="workflow-item" href="/articles?category=initial"><span>01</span><div><h3>初试经验</h3><p>科目节奏、资料选择和复盘方法。</p></div><ArrowRight size={17} /></a>
-    <a class="workflow-item" href="/articles?category=reexam"><span>02</span><div><h3>复试准备</h3><p>项目表达、专业问答和时间线。</p></div><ArrowRight size={17} /></a>
-    <a class="workflow-item" href="/articles?category=career"><span>03</span><div><h3>就业分享</h3><p>方向、城市、样本和统计口径。</p></div><ArrowRight size={17} /></a>
+    {#each data.categories.slice(0, 3) as category, index}
+      <a class="workflow-item" href={`/articles?category=${category.slug}`}><span>{String(index + 1).padStart(2, '0')}</span><div><h3>{category.name}</h3><p>{categoryDescriptions[category.slug] ?? '浏览该分类下的经验、资料与讨论。'}</p></div><ArrowRight size={17} /></a>
+    {/each}
   </div>
 </section>
 
